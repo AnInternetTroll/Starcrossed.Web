@@ -1,19 +1,30 @@
 {
-  "name": "starcrossedweb",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
-  },
-  "dependencies": {
-    "next": "10.2.0",
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
-  },
-  "devDependencies": {
-    "@types/react": "^17.0.4",
-    "typescript": "^4.2.4"
-  }
+	"name": "starcrossedweb",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"format": "prettier --use-tabs -w ."
+	},
+	"dependencies": {
+		"@apollo/client": "^3.3.16",
+		"@fontsource/roboto": "^4.2.3",
+		"@material-ui/core": "^4.11.4",
+		"@material-ui/icons": "^4.11.2",
+		"@material-ui/lab": "^4.0.0-alpha.58",
+		"graphql": "^15.5.0",
+		"next": "10.2.0",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"react-tracked": "^1.7.0",
+		"scheduler": "^0.20.2"
+	},
+	"devDependencies": {
+		"@types/node": "^15.0.1",
+		"@types/react": "^17.0.4",
+		"sass": "^1.32.12",
+		"typescript": "^4.2.4"
+	}
 }
