@@ -1,32 +1,3 @@
-import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
-
-const authLink = setContext((_, { headers }) => {
-	const token = getItem("token");
-	const basic = getItem("basic");
-	// return the headers to the context so httpLink can read them
-	return {
-		headers: {
-			...headers,
-			authorization: token
-				? `Bearer ${token}`
-				: basic
-				? `Basic ${basic}`
-				: "",
-		},
-	};
-});
-
-export const client = new ApolloClient({
-	cache: new InMemoryCache(),
-	link: authLink.concat(
-		createHttpLink({
-			uri: `${process.env.base_url}/graphql`,
-		})
-	),
-	ssrMode: typeof window === "undefined",
-});
-
 /**
  * Hash any string with sha-256
  * @param message The string to be sha-256 hashed
@@ -83,18 +54,24 @@ export class Api {
 		const data = await res.json();
 		if (res.ok) return { data: data.data, error: null, code: res.status };
 		else {
-			if (data.errors[0].extensions.code === "TOKEN_EXPIRE") {
-				this.login();
-				return this.graphql(query);
+			for (let i = 0; i < data.errors.length; i++) {
+				if (data.errors[i].extensions.code === "TOKEN_EXPIRE") {
+					this.login();
+					return this.graphql(query);
+				}
 			}
 			return { data: null, error: data.error, code: res.status };
 		}
 	}
 
 	static async login(username?: string, password?: string) {
-		const basic =
-			getItem("basic") ||
-			setItem("basic", atob(`${username}:${await sha256(password)}`));
+		let basic: string;
+		if (username && password) {
+			basic = setItem(
+				"basic",
+				btoa(`${username}:${await sha256(password)}`)
+			);
+		} else basic = getItem("basic");
 		const res = await fetch(`${this.base_url}/auth/token`, {
 			headers: {
 				authorization: basic ? `Basic ${basic}` : "",
@@ -104,8 +81,7 @@ export class Api {
 		const data = await res.json();
 		if (res.ok) {
 			setItem("token", data.token);
-			return data;
-		} else
-			return { data, errorCode: res.status, httpError: res.statusText };
+			return { data, status: res.status, statusText: res.statusText };
+		} else return { data, status: res.status, statusText: res.statusText };
 	}
 }

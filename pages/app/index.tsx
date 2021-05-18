@@ -15,7 +15,7 @@ import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
-import Grid from '@material-ui/core/Grid';
+import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { FormEvent, useEffect, useState } from "react";
 import { Api } from "../../components/utils";
@@ -50,7 +50,12 @@ export default function Main() {
 
 	return (
 		<Grid container spacing={3}>
-				<ChannelsSidebar rooms={rooms} setRooms={setRooms} setRoom={setRoom} currentRoom={room} />
+			<ChannelsSidebar
+				rooms={rooms}
+				setRooms={setRooms}
+				setRoom={setRoom}
+				currentRoom={room}
+			/>
 			<Grid item style={{ flexGrow: 1 }}>
 				<Chat room={room} />
 			</Grid>
@@ -65,7 +70,8 @@ function Chat({ room }: { room?: any }) {
 	const [messages, setMessages] = useState([]);
 
 	useEffect(() => {
-		Api.graphql(`
+		Api.graphql(
+			`
 		{
 			messages(room:"${room._id}") {
 				_id
@@ -75,7 +81,8 @@ function Chat({ room }: { room?: any }) {
 				}
 			}
 		}
-		`).then(data => {
+		`
+		).then((data) => {
 			setMessages(data.data?.messages);
 		});
 	}, [room, setMessages]);
@@ -115,7 +122,6 @@ function Chat({ room }: { room?: any }) {
 				</Button>
 			</form>
 		</div>
-
 	);
 }
 
@@ -126,7 +132,12 @@ function ChannelsSidebar({ rooms, setRooms, setRoom, currentRoom }) {
 			style={{ display: "flex", zIndex: 10, width: 240 }}
 		>
 			<Toolbar />
-			<Rooms currentRoom={currentRoom} rooms={rooms} setRooms={setRooms} setRoom={setRoom} />
+			<Rooms
+				currentRoom={currentRoom}
+				rooms={rooms}
+				setRooms={setRooms}
+				setRoom={setRoom}
+			/>
 		</Drawer>
 	);
 }
@@ -140,7 +151,12 @@ function Rooms({ rooms, setRooms, setRoom, currentRoom }) {
 			<Divider />
 			{/* Channel list */}
 			{rooms.map((item) => (
-				<RoomInList currentRoom={currentRoom} key={item._id} room={item} onClick={() => setRoom(item)} />
+				<RoomInList
+					currentRoom={currentRoom}
+					key={item._id}
+					room={item}
+					onClick={() => setRoom(item)}
+				/>
 			))}
 		</List>
 	);
@@ -149,7 +165,14 @@ function Rooms({ rooms, setRooms, setRoom, currentRoom }) {
 function RoomInList({ room, onClick, currentRoom }) {
 	return (
 		<ListItem>
-			<Button variant={currentRoom?._id == room._id ? "outlined" : "contained"} onClick={onClick}>{room.name}</Button>
+			<Button
+				variant={
+					currentRoom?._id == room._id ? "outlined" : "contained"
+				}
+				onClick={onClick}
+			>
+				{room.name}
+			</Button>
 		</ListItem>
 	);
 }
@@ -259,12 +282,10 @@ function Message({ message }) {
 }
 
 function UsersSidebar({ room, ...props }) {
-	if (!room) return <p>Loading...</p>
+	if (!room) return <p>Loading...</p>;
 	const [open, setOpen] = useState(false);
 	return (
-		<div
-			style={{ bottom: 5, position: "absolute" }}
-		>
+		<div style={{ bottom: 5, position: "absolute" }}>
 			<Dialog
 				open={open}
 				onClose={() => setOpen(false)}
@@ -284,10 +305,7 @@ function UsersSidebar({ room, ...props }) {
 						/>
 					</DialogContent>
 					<DialogActions>
-						<Button
-							onClick={() => setOpen(false)}
-							color="primary"
-						>
+						<Button onClick={() => setOpen(false)} color="primary">
 							Cancel
 						</Button>
 						<Button type="submit" color="primary">
@@ -296,20 +314,17 @@ function UsersSidebar({ room, ...props }) {
 					</DialogActions>
 				</form>
 			</Dialog>
-			<Drawer
-				variant="permanent"
-				{...props}
-			>
+			<Drawer variant="permanent" {...props}>
 				<Toolbar />
 				<List>
 					<Button onClick={() => setOpen(!open)}>Add new user</Button>
 					<Divider />
 					{/* Channel list */}
-					{room.members.map(user => (
+					{room.members.map((user) => (
 						<ListItem>{user.username}</ListItem>
 					))}
 				</List>
 			</Drawer>
 		</div>
-	)
+	);
 }
