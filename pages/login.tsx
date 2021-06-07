@@ -38,7 +38,10 @@ function LoginForm() {
 		).then((res) => {
 			if (res.status >= 400)
 				setLoginFeedback({ ok: false, text: res.data.message });
-			else setLoginFeedback({ ok: true, text: res.data.message });
+			else {
+				setLoginFeedback({ ok: true, text: res.data.message });
+				location.href = "/app";
+			}
 		});
 	};
 	return (

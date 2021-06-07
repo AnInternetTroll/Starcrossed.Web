@@ -1,7 +1,7 @@
 module.exports = {
 	poweredByHeader: false,
 	env: {
-		base_url: "https://starcrossed.aninternettroll.xyz/api",
+		base_url: "starcrossed.aninternettroll.xyz/api",
 	},
 	amp: true,
 	future: {

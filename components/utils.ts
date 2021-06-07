@@ -39,7 +39,7 @@ export class Api {
 	): Promise<{ data?: any; error?: any; code: number }> {
 		const token = getItem("token");
 		const basic = getItem("basic");
-		const res = await fetch(`${this.base_url}/graphql`, {
+		const res = await fetch(`https://${this.base_url}/graphql`, {
 			method: "POST",
 			headers: {
 				authorization: token
@@ -64,6 +64,11 @@ export class Api {
 		}
 	}
 
+	static websocket(query: string): WebSocket {
+		const websocket = new WebSocket(`wss://${this.base_url}/graphql`)
+		return websocket;
+	}
+
 	static async login(username?: string, password?: string) {
 		let basic: string;
 		if (username && password) {
@@ -72,11 +77,30 @@ export class Api {
 				btoa(`${username}:${await sha256(password)}`)
 			);
 		} else basic = getItem("basic");
-		const res = await fetch(`${this.base_url}/auth/token`, {
+		const res = await fetch(`https://${this.base_url}/auth/token`, {
 			headers: {
 				authorization: basic ? `Basic ${basic}` : "",
 				"Content-Type": "application/json",
 			},
+		});
+		const data = await res.json();
+		if (res.ok) {
+			setItem("token", data.token);
+			return { data, status: res.status, statusText: res.statusText };
+		} else return { data, status: res.status, statusText: res.statusText };
+	}
+
+	static async register(username: string, password: string, other: object = {}) {
+		const basic = setItem(
+			"basic",
+			btoa(`${username}:${await sha256(password)}`)
+		);
+		const res = await fetch(`https://${this.base_url}/auth/register`, {
+			headers: {
+				authorization: basic ? `Basic ${basic}` : "",
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(other),
 		});
 		const data = await res.json();
 		if (res.ok) {

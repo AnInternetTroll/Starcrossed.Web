@@ -1,4 +1,3 @@
-import { useTracked } from "../../components/state";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Drawer from "@material-ui/core/Drawer";
@@ -16,13 +15,14 @@ import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import { FormEvent, useEffect, useState } from "react";
-import { Api } from "../../components/utils";
+import { Api, getItem } from "../../components/utils";
 
 export default function Main() {
 	const [rooms, setRooms] = useState([]);
 	const [room, setRoom] = useState(null);
+
+	if (typeof window !== "undefined" && !getItem("basic")) location.href = "/login";
 
 	useEffect(() => {
 		Api.graphql(
